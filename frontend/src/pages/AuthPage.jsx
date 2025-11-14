@@ -1,5 +1,6 @@
 // src/pages/AuthPage.jsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { startPhoneSignIn, ensureLocalPersistence } from "../firebase";
 
 export default function AuthPage() {
@@ -8,6 +9,7 @@ export default function AuthPage() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   async function handleSendCode(e) {
     e?.preventDefault();
@@ -32,6 +34,7 @@ export default function AuthPage() {
     try {
       const userCred = await confirmation.confirm(code);
       setMessage("Signed in as " + userCred.user.phoneNumber);
+      navigate("/my-checkpoints");
     } catch (err) {
       console.error(err);
       setMessage("Failed to confirm code: " + (err.message || err));
