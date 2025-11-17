@@ -3,12 +3,16 @@ import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getChainById, updateChain } from "../utils/chains";
 import { auth } from "../firebase";
+import { getFunctions, httpsCallable } from "firebase/functions";
+i
+export const functions = getFunctions();
+export const sendWhatsapp = httpsCallable(functions, "sendWhatsapp");
+
 
 export default function CheckpointViewPage() {
   const { id } = useParams();
   const [chain, setChain] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const currentUserId = auth.currentUser?.uid || null;
 
   const isOwner = chain?.ownerId === currentUserId;
