@@ -1,8 +1,11 @@
+// src/pages/MyCheckpointsPage.jsx
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { listChainsForOwner, createChain } from "../utils/chains";
+import { PlusCircle } from "lucide-react";
 
 export default function MyCheckpointsPage() {
   const navigate = useNavigate();
@@ -12,7 +15,6 @@ export default function MyCheckpointsPage() {
   useEffect(() => {
     const user = auth.currentUser;
 
-    // If not signed in, send to login
     if (!user) {
       navigate("/");
       return;
@@ -27,7 +29,6 @@ export default function MyCheckpointsPage() {
     load();
   }, [navigate]);
 
-
   async function handleCreateNew() {
     const user = auth.currentUser;
     if (!user) {
@@ -35,53 +36,62 @@ export default function MyCheckpointsPage() {
       return;
     }
 
-    // Create new chain in DB
     const newChain = await createChain(user.uid, "Untitled Checkpoint");
-
-    // Redirect to edit page for this chain
     navigate(`/checkpoint/${newChain.id}/edit`);
   }
 
   return (
-    <>
-      <Navbar />
+  <>
+    <Navbar />
 
-      <div className="p-6 max-w-2xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">My Checkpoints</h2>
+    <div className="min-h-screen bg-gradient-to-b from-[#0A1A2F] to-[#00224D] text-white px-4 py-6">
+      
+      {/* Hero Section */}
+      <div className="max-w-xl mx-auto mt-4">
+        <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
+          Your <br />
+          <span className="text-[#FF4F6D]">Checkpoints</span>
+        </h1>
+
+        <div className="mt-4 flex justify-between items-center">
+          <p className="text-sm sm:text-base text-gray-300 max-w-xs">
+            Track, manage, and share your progress seamlessly.
+          </p>
 
           <button
             onClick={handleCreateNew}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+            className="flex items-center gap-2 bg-[#FF4F6D] hover:bg-[#ff3558] transition px-4 py-2 rounded-lg shadow"
           >
-            + Create New
+            <PlusCircle size={18} />
+            <span className="text-sm font-semibold">New</span>
           </button>
         </div>
+      </div>
 
+      {/* List Section */}
+      <div className="max-w-xl mx-auto mt-8 space-y-4">
         {loading ? (
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-300">Loading...</p>
         ) : chains.length === 0 ? (
-          <p className="text-gray-600">
-            You haven't created any checkpoints yet.
-          </p>
+          <p className="text-gray-300">You haven't created any checkpoints yet.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-4">
-            {chains.map((cp) => (
-              <Link
-                key={cp.id}
-                to={`/checkpoint/${cp.id}`}
-                className="p-4 border rounded-lg shadow hover:bg-gray-50"
-              >
-                <h3 className="text-xl font-semibold">{cp.title}</h3>
+          chains.map((cp) => (
+            <Link
+              key={cp.id}
+              to={`/checkpoint/${cp.id}`}
+              className="block bg-white/10 backdrop-blur rounded-xl p-4 shadow hover:scale-[1.02] transition"
+            >
+              <h3 className="text-lg font-semibold text-white">{cp.title}</h3>
 
-                <p className="text-sm text-gray-500 mt-1">
-                  {cp.checkpoints?.length || 0} steps
-                </p>
-              </Link>
-            ))}
-          </div>
+              <p className="text-sm text-gray-300 mt-1">
+                {cp.checkpoints?.length || 0} steps
+              </p>
+            </Link>
+          ))
         )}
       </div>
-    </>
-  );
+    </div>
+  </>
+);
+
 }

@@ -59,20 +59,29 @@ export default function CheckpointViewPage() {
   }
 
   return (
-    <>
-      <Navbar />
+  <>
+    <Navbar />
 
-      {/* Header */}
-      <div className="p-6 max-w-3xl mx-auto flex justify-between items-center mb-10">
-        <h2 className="text-4xl font-bold tracking-tight text-gray-800">
-          {chain.title}
-        </h2>
+    <div className="min-h-screen bg-gradient-to-b from-[#0A1A2F] to-[#00224D] text-white px-4 py-6">
 
+      {/* HEADER SECTION */}
+      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
+            {chain.title}
+          </h2>
+
+          <p className="text-gray-300 text-sm mt-1">
+            {isOwner ? "Tap a step to update progress." : "View progress in real-time."}
+          </p>
+        </div>
+
+        {/* BUTTONS */}
         <div className="flex gap-3">
           {isOwner && (
             <Link
               to={`/checkpoint/${chain.id}/edit`}
-              className="px-4 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-sm transition"
+              className="px-4 py-2 bg-[#FF4F6D] hover:bg-[#ff3558] rounded-xl font-semibold shadow-lg transition"
             >
               Edit
             </Link>
@@ -80,58 +89,60 @@ export default function CheckpointViewPage() {
 
           <button
             onClick={handleShare}
-            className="px-4 py-2 rounded-xl bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 shadow-sm transition"
+            className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl font-semibold shadow-lg transition"
           >
             Share
           </button>
         </div>
       </div>
 
-      {/* CHECKPOINT LINKED LIST */}
-      <div className="max-w-3xl mx-auto px-6">
-        <div className="relative">
+      {/* TIMELINE */}
+      <div className="max-w-3xl mx-auto mt-6">
 
-          {/* Vertical Line */}
-          <div className="absolute left-6 top-0 bottom-0 w-1 
-                          bg-gradient-to-b from-blue-300 via-gray-300 to-blue-300 
-                          rounded-full">
-          </div>
+        <div className="relative pl-10 sm:pl-16">
+
+          {/* Vertical Gradient Line */}
+          <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-300 via-gray-300 to-blue-300 rounded-full opacity-50"></div>
 
           {chain.checkpoints?.map((node, index) => (
-            <div 
-              key={index} 
-              className={`relative pl-16 mb-10 group 
-                          ${isOwner ? "cursor-pointer" : "cursor-default"}`}
+            <div
+              key={index}
               onClick={() => handleStepClick(index)}
+              className={`relative mb-10 cursor-pointer transition group`}
             >
-
-              {/* Node Circle */}
+              {/* Step Circle */}
               <div
-                className={`absolute left-0 top-0 w-12 h-12 rounded-full 
-                            flex items-center justify-center font-bold border-4 
-                            transition-all
+                className={`
+                  absolute left-0 sm:left-0 top-0 w-8 h-8 sm:w-12 sm:h-12 
+                  rounded-full flex items-center justify-center font-bold border-4 
+                  transition-all shadow-lg
                   ${
                     node.completed
-                      ? "bg-green-600 border-green-700 text-white shadow-lg"
-                      : "bg-white border-gray-300 text-gray-600 group-hover:border-blue-400"
+                      ? "bg-green-500 border-green-700 text-white scale-110"
+                      : "bg-white text-gray-700 border-gray-300 group-hover:border-[#FF4F6D] group-hover:scale-105"
                   }
                 `}
               >
                 {index + 1}
               </div>
 
-              {/* Node Card */}
-              <div className="bg-white border border-gray-200 rounded-xl p-5 
-                              shadow-sm hover:shadow-md transition-all">
-                <p className="text-lg font-medium text-gray-800">
-                  {node.text}
-                </p>
+              {/* Step Card */}
+              <div className="
+                ml-10 sm:ml-16 
+                bg-white/10 backdrop-blur border border-white/10 
+                rounded-xl p-4 sm:p-5 shadow-md 
+                hover:bg-white/20 hover:shadow-xl transition-all text-gray-100
+              ">
+                <p className="text-base sm:text-lg font-medium">{node.text}</p>
               </div>
             </div>
           ))}
 
         </div>
+
       </div>
-    </>
-  );
+    </div>
+  </>
+);
+
 }
