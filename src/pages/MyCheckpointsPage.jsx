@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
-import { listChainsForOwner } from "../utils/chains";
+import { listChainsForOwner, createChain } from "../utils/chains";
 
 export default function MyCheckpointsPage() {
   const navigate = useNavigate();
@@ -25,7 +25,22 @@ export default function MyCheckpointsPage() {
     }
 
     load();
-  }, []);
+  }, [navigate]);
+
+
+  async function handleCreateNew() {
+    const user = auth.currentUser;
+    if (!user) {
+      navigate("/");
+      return;
+    }
+
+    // Create new chain in DB
+    const newChain = await createChain(user.uid, "Untitled Checkpoint");
+
+    // Redirect to edit page for this chain
+    navigate(`/checkpoint/${newChain.id}/edit`);
+  }
 
   return (
     <>
@@ -35,12 +50,12 @@ export default function MyCheckpointsPage() {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">My Checkpoints</h2>
 
-          <Link
-            to="/checkpoint/new/edit"
+          <button
+            onClick={handleCreateNew}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg"
           >
             + Create New
-          </Link>
+          </button>
         </div>
 
         {loading ? (
@@ -59,7 +74,7 @@ export default function MyCheckpointsPage() {
               >
                 <h3 className="text-xl font-semibold">{cp.title}</h3>
 
-                <p classname="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 mt-1">
                   {cp.checkpoints?.length || 0} steps
                 </p>
               </Link>
