@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import { getChainById, updateChain } from "../utils/chains";
 import { auth } from "../firebase";
 import { getFunctions, httpsCallable } from "firebase/functions";
-i
+
 export const functions = getFunctions();
 export const sendWhatsapp = httpsCallable(functions, "sendWhatsapp");
 
