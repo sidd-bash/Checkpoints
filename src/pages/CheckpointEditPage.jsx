@@ -1,11 +1,10 @@
-// src/pages/CheckpointEditPage.jsx
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
-import { getChainById, updateChain } from "../utils/chains";
+import { updateChain } from "../utils/chains";
 
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
@@ -17,7 +16,10 @@ export default function CheckpointEditPage() {
   const [nodes, setNodes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [mobileView, setMobileView] = useState("edit"); // "edit" | "preview"
+  const [mobileView, setMobileView] = useState("edit");
+
+  // UX IMPROVEMENTS
+  const [saveStatus, setSaveStatus] = useState("Saved");
 
   const undoStack = useRef([]);
   const redoStack = useRef([]);
@@ -36,7 +38,6 @@ export default function CheckpointEditPage() {
 
     const unsubscribe = onSnapshot(ref, (snap) => {
       if (!snap.exists()) return;
-
       const data = snap.data();
 
       if (!isEditingTitle.current) setTitle(data.title);
@@ -88,15 +89,18 @@ export default function CheckpointEditPage() {
   });
 
   // --------------------------------------------------
-  // SAVE FUNCTIONS (debounced)
+  // SAVE FUNCTIONS WITH STATUS INDICATOR
   // --------------------------------------------------
   const debouncedSaveTitle = useCallback(
     (newTitle) => {
       clearTimeout(saveTitleTimer.current);
+      setSaveStatus("Saving...");
       saveTitleTimer.current = setTimeout(() => {
-        updateChain(id, { title: newTitle });
+        updateChain(id, { title: newTitle }).then(() => {
+          setSaveStatus("Saved");
+        });
         isEditingTitle.current = false;
-      }, 400);
+      }, 350);
     },
     [id]
   );
@@ -104,10 +108,13 @@ export default function CheckpointEditPage() {
   const debouncedSaveNodes = useCallback(
     (newNodes) => {
       clearTimeout(saveNodesTimer.current);
+      setSaveStatus("Saving...");
       saveNodesTimer.current = setTimeout(() => {
-        updateChain(id, { checkpoints: newNodes });
+        updateChain(id, { checkpoints: newNodes }).then(() => {
+          setSaveStatus("Saved");
+        });
         isEditingNode.current = false;
-      }, 400);
+      }, 350);
     },
     [id]
   );
@@ -119,7 +126,9 @@ export default function CheckpointEditPage() {
     pushUndoState();
     const val = e.target.value;
     setTitle(val);
+
     isEditingTitle.current = true;
+    setSaveStatus("Saving...");
     debouncedSaveTitle(val);
   }
 
@@ -128,11 +137,14 @@ export default function CheckpointEditPage() {
   // --------------------------------------------------
   function handleNodeChange(index, value) {
     pushUndoState();
+
     const updated = [...nodes];
     updated[index].text = value;
 
     setNodes(updated);
+
     isEditingNode.current = true;
+    setSaveStatus("Saving...");
     debouncedSaveNodes(updated);
   }
 
@@ -141,6 +153,7 @@ export default function CheckpointEditPage() {
   // --------------------------------------------------
   function addNode() {
     pushUndoState();
+    setSaveStatus("Saving...");
 
     const updated = [
       ...nodes,
@@ -148,7 +161,9 @@ export default function CheckpointEditPage() {
     ];
 
     setNodes(updated);
-    updateChain(id, { checkpoints: updated });
+    updateChain(id, { checkpoints: updated }).then(() => {
+      setSaveStatus("Saved");
+    });
 
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
@@ -160,6 +175,7 @@ export default function CheckpointEditPage() {
   // --------------------------------------------------
   function toggleCompletion(i) {
     pushUndoState();
+    setSaveStatus("Saving...");
 
     const updated = nodes.map((n, idx) => ({
       ...n,
@@ -167,7 +183,9 @@ export default function CheckpointEditPage() {
     }));
 
     setNodes(updated);
-    updateChain(id, { checkpoints: updated });
+    updateChain(id, { checkpoints: updated }).then(() => {
+      setSaveStatus("Saved");
+    });
   }
 
   // --------------------------------------------------
@@ -183,15 +201,23 @@ export default function CheckpointEditPage() {
     items.splice(result.destination.index, 0, moved);
 
     setNodes(items);
-    updateChain(id, { checkpoints: items });
+    setSaveStatus("Saving...");
+    updateChain(id, { checkpoints: items }).then(() => {
+      setSaveStatus("Saved");
+    });
   }
 
   // --------------------------------------------------
-  // CANCEL BUTTON
+  // MANUAL SAVE BUTTON
   // --------------------------------------------------
-  function handleCancel() {
-    navigate("/my-checkpoints");
+  function manualSave() {
+    setSaveStatus("Saving...");
+    updateChain(id, { title, checkpoints: nodes }).then(() => {
+      setSaveStatus("Saved");
+    });
+    navigate("/checkpoint/" + id);
   }
+
 
   // --------------------------------------------------
   // UI
@@ -200,9 +226,16 @@ export default function CheckpointEditPage() {
 
   const editPanel = (
     <div className="w-full p-4">
-      <h2 className="text-2xl font-bold text-white mb-4">
-        Editing: {title || "Untitled"}
-      </h2>
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          Editing: {title || "Untitled"}
+          {(isEditingTitle.current || isEditingNode.current) && (
+            <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
+          )}
+        </h2>
+
+        <span className="text-sm text-gray-300">{saveStatus}</span>
+      </div>
 
       <input
         type="text"
@@ -252,14 +285,6 @@ export default function CheckpointEditPage() {
         + Add Step
       </button>
 
-      <div className="mt-6 text-right">
-        <button
-          onClick={handleCancel}
-          className="px-4 py-2 rounded-lg bg-gray-400 text-black hover:bg-gray-500"
-        >
-          Cancel
-        </button>
-      </div>
     </div>
   );
 
@@ -276,11 +301,11 @@ export default function CheckpointEditPage() {
           >
             <div
               className={`absolute -left-7 w-10 h-10 rounded-full flex items-center justify-center font-bold 
-              ${
-                node.completed
-                  ? "bg-green-600 text-white"
-                  : "border-2 border-gray-400 bg-[#0f172a] text-white"
-              }`}
+                ${
+                  node.completed
+                    ? "bg-green-600 text-white"
+                    : "border-2 border-gray-400 bg-[#0f172a] text-white"
+                }`}
             >
               {i + 1}
             </div>
@@ -323,29 +348,39 @@ export default function CheckpointEditPage() {
         </button>
       </div>
 
-      {/* DESKTOP SPLIT — MOBILE STACKED */}
-      <div
-        className="
-          mt-4
-          md:grid md:grid-cols-2
-          gap-6 
-          p-4 
-          bg-[#0f172a] 
-          min-h-screen
-        "
-      >
-        {/* Editor on mobile only if selected */}
+      {/* DESKTOP SPLIT */}
+      <div className="mt-4 md:grid md:grid-cols-2 gap-6 p-4 bg-[#0f172a] min-h-screen">
         <div className={`${mobileView === "edit" ? "block" : "hidden"} md:block`}>
           {editPanel}
         </div>
 
-        {/* Preview on mobile only if selected */}
-        <div
-          className={`${mobileView === "preview" ? "block" : "hidden"} md:block`}
-        >
+        <div className={`${mobileView === "preview" ? "block" : "hidden"} md:block`}>
           {previewPanel}
         </div>
       </div>
+
+      {/* FLOATING SAVE BUTTON */}
+      <button
+  onClick={manualSave}
+  className="
+    fixed right-6 bottom-6
+    px-5 py-3 
+    rounded-xl 
+    font-semibold
+
+    bg-white/20
+    backdrop-blur-md
+    border border-white/30
+    shadow-xl
+    text-white
+
+    hover:bg-white/30
+    transition
+  "
+>
+  Save & View
+</button>
+
     </>
   );
 }

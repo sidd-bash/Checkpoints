@@ -83,20 +83,23 @@ export default function CheckpointViewPage() {
         {/* BUTTONS */}
         <div className="flex gap-3">
           {isOwner && (
+            <>
             <Link
               to={`/checkpoint/${chain.id}/edit`}
               className="px-4 py-2 bg-[#FF4F6D] hover:bg-[#ff3558] rounded-xl font-semibold shadow-lg transition"
             >
               Edit
             </Link>
+            <button
+            onClick={handleShare}
+              className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl font-semibold shadow-lg transition"
+            >
+              Share
+            </button>
+            </>
           )}
 
-          <button
-            onClick={handleShare}
-            className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl font-semibold shadow-lg transition"
-          >
-            Share
-          </button>
+          
         </div>
       </div>
 
