@@ -54,17 +54,21 @@ export default function AuthPage() {
   </div>
 
   {/* --- CONTENT AREA --- */}
-  <div className="flex flex-col md:flex-row items-center justify-between w-full px-6 md:px-16 lg:px-24 gap-12 pb-20">
+  <div className="
+    flex flex-col md:flex-row 
+    items-center md:items-center 
+    justify-center md:justify-between 
+    min-h-[80vh] w-full 
+    px-6 md:px-16 lg:px-24 
+    gap-12 pb-20
+  ">
 
     {/* LEFT HERO TEXT */}
-    <div className="w-full md:w-1/2 text-left">
-
-      <h1 className="text-5xl md:text-5xl font-extrabold leading-tight">
+    <div className="w-full md:w-1/2 text-left pt-10 md:pt-0">
+      <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
         Your Workflow.
         <br />
-        <span className="text-[#FF4664]">
-          Perfectly Tracked.
-        </span>
+        <span className="text-[#FF4664]">Perfectly Tracked.</span>
       </h1>
 
       <p className="mt-4 text-base md:text-lg text-gray-300 max-w-md">
@@ -72,7 +76,7 @@ export default function AuthPage() {
         Stay aligned and track every step effortlessly.
       </p>
 
-      <ul className="mt-6 space-y-3 text-gray-200 text-base md:text-lg">
+      <ul className="mt-6 space-y-3 text-gray-200 text-lg">
         <li className="flex gap-2 items-center">
           <span className="text-[#FF4664]">✔</span>
           Create unlimited checkpoint chains
@@ -86,14 +90,11 @@ export default function AuthPage() {
           Mark progress in real-time
         </li>
       </ul>
-
     </div>
 
     {/* --- RIGHT LOGIN CARD --- */}
     <div className="w-full md:w-1/2 flex justify-center">
-
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/10 p-6 md:p-8 rounded-2xl shadow-xl">
-
+      <div className="w-full max-w-lg bg-white/10 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl">
         <h2 className="text-center text-xl font-semibold mb-4">
           Sign in
         </h2>
