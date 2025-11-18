@@ -1,16 +1,95 @@
-# React + Vite
+# 🚀 Checkpoints  
+### Smart Attendance, Verification & Check-In System  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔗 **Live App:** https://checkpoints-614e4.web.app/
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📌 About Checkpoints
 
-## React Compiler
+**Checkpoints** is a simple, fast, and modern web application designed for effortless attendance tracking and verification.  
+It is ideal for schools, universities, events, training centers, teams, and any environment where quick and reliable check-ins are needed.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Users sign in using secure OTP authentication, enter checkpoint codes, and their attendance is instantly recorded in the system’s real-time dashboard.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🎯 Key Features
+
+### 🔐 OTP Login  
+Secure, password-less authentication using your phone number.
+
+### 🏁 Instant Check-In  
+Enter or scan a checkpoint code to record your attendance instantly.
+
+### 📊 Real-Time Dashboard (Admins)  
+Admins can view:
+- Live check-ins  
+- Attendance history  
+- Verification details  
+- User activity  
+
+### ⚡ Firebase Powered  
+Checkpoints uses:
+- Firebase Authentication  
+- Firestore Realtime Database  
+- Firebase Cloud Functions  
+- Firebase Hosting  
+
+This ensures speed, reliability, and secure operations.
+
+### 📱 Mobile-Friendly  
+Optimized for quick check-ins using any smartphone browser.
+
+---
+
+## 🌐 Try It Now  
+No installation. No setup.
+
+👉 **Start using Checkpoints:**  
+**https://checkpoints-614e4.web.app/**
+
+---
+
+## 👣 How It Works
+
+### 1️⃣ Login  
+Enter your phone number → receive OTP → verify → start using the app.
+
+### 2️⃣ Enter Checkpoint  
+Input the checkpoint code provided by an admin or system.
+
+### 3️⃣ Verified  
+The system logs:
+- User  
+- Timestamp  
+- Checkpoint ID  
+
+Admins see updates immediately.
+
+### 4️⃣ View Records  
+Admins can access full logs from the dashboard interface.
+
+---
+
+## 🖼 Screenshots (Optional)  
+Add your own screenshots to this folder:
+
+/screenshots
+├── login.png
+├── enter-code.png
+├── success.png
+└── admin-dashboard.png
+
+
+
+---
+
+## 💬 Feedback & Support  
+If you’d like to request new features or report an issue, feel free to open a GitHub issue.
+
+---
+
+## ⭐ Like the Project?  
+If Checkpoints helps you, please consider giving the repo a ⭐ — it really helps!
+
